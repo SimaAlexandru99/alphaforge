@@ -82,11 +82,17 @@ export async function getSignal(symbol: string): Promise<MarketSignal> {
       ),
     ]);
 
-    const indicators = signal.indicators as Record<string, unknown> | undefined;
-    const priceValue = Number(signal.current_price ?? signal.price ?? 0);
-    const rsiValue = Number(indicators?.rsi ?? signal.rsi ?? 50);
+    // PRISM returns { object: "list", data: [...] } — extract first item
+    const item =
+      signal.object === "list" && Array.isArray(signal.data)
+        ? (signal.data[0] as Record<string, unknown>)
+        : signal;
+
+    const indicators = item.indicators as Record<string, unknown> | undefined;
+    const priceValue = Number(item.current_price ?? item.price ?? 0);
+    const rsiValue = Number(indicators?.rsi ?? item.rsi ?? 50);
     const trendRaw = String(
-      signal.direction ?? signal.overall_signal ?? signal.trend ?? "sideways"
+      item.direction ?? item.overall_signal ?? item.trend ?? "sideways"
     ).toLowerCase();
     const volatilityValue = Number(
       risk.daily_volatility ?? risk.volatility ?? 1
