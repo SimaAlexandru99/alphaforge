@@ -27,4 +27,7 @@ export const env = {
   krakenCliSimulate: boolFromEnv(process.env.KRAKEN_CLI_SIMULATE, true),
   krakenApiKey: process.env.KRAKEN_API_KEY ?? "",
   krakenApiSecret: process.env.KRAKEN_API_SECRET ?? "",
+  agentPrivateKey: process.env.AGENT_PRIVATE_KEY ?? "",
+  agentWalletAddress: process.env.AGENT_WALLET_ADDRESS ?? "",
+  erc8004AgentId: process.env.ERC8004_AGENT_ID ?? "",
 };

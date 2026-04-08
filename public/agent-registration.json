@@ -1,0 +1,21 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "KrakenTradingAgent",
+  "description": "Autonomous crypto trading agent that uses PRISM market signals and LLM decision-making to execute paper trades on Kraken. Analyzes RSI, trend, volatility and risk scores to make BUY/SELL/HOLD decisions every 30 seconds, with on-chain trade intent validation via EIP-712 signed TradeIntents submitted to RiskRouter.",
+  "image": "https://raw.githubusercontent.com/SimaAlexandru99/kraken-hackathon/master/public/next.svg",
+  "services": [
+    {
+      "name": "web",
+      "endpoint": "https://github.com/SimaAlexandru99/kraken-hackathon"
+    }
+  ],
+  "x402Support": false,
+  "active": true,
+  "registrations": [
+    {
+      "agentId": 0,
+      "agentRegistry": "eip155:11155111:0x97b07dDc405B0c28B17559aFFE63BdB3632d0ca3"
+    }
+  ],
+  "supportedTrust": ["reputation", "validation"]
+}

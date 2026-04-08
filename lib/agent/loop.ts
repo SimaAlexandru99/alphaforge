@@ -5,6 +5,12 @@ import { DECISION_ACTION, RUN_STATUS } from "@/lib/domain";
 import { env } from "@/lib/env";
 import type { RunStatus } from "@/lib/generated/prisma/client";
 import { executePaperOrder } from "@/lib/kraken/cli";
+import {
+  getOrRegisterAgent,
+  postCheckpoint,
+  postTradeFeedback,
+  submitTradeIntent,
+} from "@/lib/onchain/registry";
 import { getSignal } from "@/lib/prism/client";
 import { prisma } from "@/lib/prisma";
 import { writeRuntimeState } from "@/lib/runtime-store";
@@ -107,7 +113,24 @@ async function executeAndRecord(ctx: {
   openTrade: { id: string; quantity: number; entryPrice: number } | null;
 }) {
   const { config, signal, decision, openTrade } = ctx;
-  const quantity = Number((config.defaultOrderUsd / signal.price).toFixed(6));
+  // For SELL, use exact quantity from open trade to match paper wallet balance
+  const quantity =
+    decision.action === DECISION_ACTION.SELL && openTrade
+      ? openTrade.quantity
+      : Number((config.defaultOrderUsd / signal.price).toFixed(6));
+
+  // ERC-8004: submit TradeIntent to RiskRouter (non-blocking — don't gate execution)
+  getOrRegisterAgent()
+    .then((agentId) =>
+      submitTradeIntent({
+        agentId,
+        pair: signal.symbol,
+        action: decision.action,
+        amountUsd: config.defaultOrderUsd,
+      })
+    )
+    .catch(() => undefined);
+
   const execution = await executePaperOrder({
     symbol: signal.symbol,
     side: decision.action === DECISION_ACTION.BUY ? "buy" : "sell",
@@ -164,6 +187,35 @@ async function executeAndRecord(ctx: {
       }),
     },
   });
+
+  // ERC-8004: post reputation + validation checkpoints on-chain (non-blocking)
+  if (execution.ok) {
+    getOrRegisterAgent()
+      .then((agentId) => {
+        const pnlUsd =
+          decision.action === DECISION_ACTION.SELL && openTrade
+            ? (signal.price - openTrade.entryPrice) * openTrade.quantity
+            : 0;
+        return Promise.all([
+          postTradeFeedback({
+            agentId,
+            pnlUsd,
+            action: decision.action,
+            symbol: signal.symbol,
+          }),
+          postCheckpoint({
+            agentId,
+            action: decision.action,
+            symbol: signal.symbol,
+            reason: decision.reason,
+            confidence: decision.confidence,
+          }),
+        ]);
+      })
+      .catch((err: unknown) =>
+        console.warn("[ERC-8004] On-chain post failed:", err)
+      );
+  }
 }
 
 export async function runAgentIteration() {
