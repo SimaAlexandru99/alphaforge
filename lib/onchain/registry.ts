@@ -24,6 +24,11 @@ const AGENT_DESCRIPTION =
   "Autonomous trading agent that uses PRISM market signals and LLM decision-making to execute paper trades on Kraken.";
 const AGENT_CAPABILITIES = ["trading", "market-analysis", "risk-management"];
 
+// keccak256("AgentRegistered(uint256,address,address,string)")
+const AGENT_REGISTERED_TOPIC = keccak256(
+  toBytes("AgentRegistered(uint256,address,address,string)")
+);
+
 // Cached agentId after first registration
 let cachedAgentId: bigint | null = null;
 
@@ -57,7 +62,7 @@ export async function getOrRegisterAgent(): Promise<bigint> {
   const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
   // Parse agentId from AgentRegistered event (topics[1] = agentId indexed)
-  const log = receipt.logs[0];
+  const log = receipt.logs.find((l) => l.topics[0] === AGENT_REGISTERED_TOPIC);
   const agentId = log?.topics[1] ? BigInt(log.topics[1]) : BigInt(1);
 
   cachedAgentId = agentId;
