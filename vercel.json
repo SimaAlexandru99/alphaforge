@@ -1,0 +1,4 @@
+{
+  "buildCommand": "pnpm exec prisma db push --schema ./prisma/schema.prisma && pnpm run build",
+  "installCommand": "pnpm install"
+}
