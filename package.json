@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 4000",
     "worker": "tsx scripts/worker.ts",
     "build": "next build",
     "start": "next start",
