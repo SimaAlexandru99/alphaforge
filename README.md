@@ -1,5 +1,7 @@
 # AlphaForge
 
+**Live demo: https://alphaforge-rho.vercel.app**
+
 AlphaForge is an AI trading agent built for hackathon use cases, combining market signals, LLM decision-making, risk controls, paper trading execution, and ERC-8004 on-chain identity.
 
 ## What it does
