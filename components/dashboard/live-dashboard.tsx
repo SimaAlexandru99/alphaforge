@@ -102,7 +102,7 @@ export function LiveDashboard({
           value={String(data.totals.openPositions)}
         />
         <MetricCard
-          hint="SQLite + Prisma audit trail"
+          hint="Postgres + Prisma audit trail"
           label="Trades Logged"
           value={String(data.totals.totalTrades)}
         />
