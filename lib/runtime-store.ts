@@ -1,9 +1,16 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { env } from "@/lib/env";
+import { prisma } from "@/lib/prisma";
 import type { RuntimeState } from "@/lib/types";
 
-const runtimeDir = path.join(process.cwd(), ".runtime");
+/** Cron runs every ~2m; treat heartbeat as stale after this window. */
+const CRON_HEARTBEAT_STALE_MS = 8 * 60 * 1000;
+
+const runtimeDir =
+  process.env.VERCEL === "1"
+    ? "/tmp/.runtime"
+    : path.join(process.cwd(), ".runtime");
 const runtimeFile = path.join(runtimeDir, "agent-state.json");
 
 const defaultState: RuntimeState = {
@@ -21,6 +28,33 @@ export async function ensureRuntimeDir() {
 }
 
 export async function readRuntimeState(): Promise<RuntimeState> {
+  if (process.env.VERCEL === "1") {
+    const base = { ...defaultState };
+    try {
+      const row = await prisma.agentConfig.findUnique({
+        where: { id: "default" },
+      });
+      if (row?.lastCronHeartbeat) {
+        const age = Date.now() - row.lastCronHeartbeat.getTime();
+        const fresh = age < CRON_HEARTBEAT_STALE_MS;
+        return {
+          ...base,
+          isActive: fresh,
+          lastHeartbeat: row.lastCronHeartbeat.toISOString(),
+          mode: row.tradingMode ?? base.mode,
+        };
+      }
+    } catch (err) {
+      console.error("[runtime-store] Vercel DB heartbeat read failed:", err);
+    }
+    try {
+      const raw = await readFile(runtimeFile, "utf8");
+      return { ...defaultState, ...JSON.parse(raw) } as RuntimeState;
+    } catch {
+      return base;
+    }
+  }
+
   try {
     const raw = await readFile(runtimeFile, "utf8");
     return { ...defaultState, ...JSON.parse(raw) } as RuntimeState;

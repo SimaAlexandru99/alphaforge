@@ -10,7 +10,8 @@ export async function getLatestSignals(): Promise<MarketSignal[]> {
       orderBy: { createdAt: "desc" },
       take: 50,
     });
-  } catch {
+  } catch (err) {
+    console.error("[dashboard] getLatestSignals failed:", err);
     return [];
   }
 
@@ -44,7 +45,8 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
       prisma.agentRun.findMany({ orderBy: { createdAt: "desc" }, take: 15 }),
       getLatestSignals(),
     ]);
-  } catch {
+  } catch (err) {
+    console.error("[dashboard] getDashboardMetrics failed:", err);
     return {
       runtime: {
         ...runtime,

@@ -42,7 +42,8 @@ export async function ensureAgentConfig() {
         llmModel: env.llmModel,
       },
     });
-  } catch {
+  } catch (err) {
+    console.error("[config] ensureAgentConfig failed:", err);
     return {
       id: "default",
       isEnabled: false,

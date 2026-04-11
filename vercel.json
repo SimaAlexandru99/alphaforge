@@ -1,4 +1,10 @@
 {
-  "buildCommand": "pnpm exec prisma db push --schema ./prisma/schema.prisma && pnpm run build",
-  "installCommand": "pnpm install"
+  "buildCommand": "pnpm exec prisma db push --schema ./prisma/schema.prisma && pnpm exec tsx scripts/seed-demo.ts && pnpm run build",
+  "installCommand": "pnpm install",
+  "crons": [
+    {
+      "path": "/api/cron/agent-tick",
+      "schedule": "*/2 * * * *"
+    }
+  ]
 }

@@ -42,6 +42,10 @@ const sellReasons = [
 async function main() {
   console.log("Seeding demo data...\n");
 
+  // Clear existing data so re-runs don't duplicate records
+  await prisma.trade.deleteMany();
+  await prisma.agentRun.deleteMany();
+
   let totalPnl = 0;
 
   for (const t of seedTrades) {
@@ -110,6 +114,17 @@ async function main() {
 
   const sign = totalPnl >= 0 ? "+" : "";
   console.log(`\nTotal PnL: ${sign}${totalPnl.toFixed(2)} USD`);
+
+  await prisma.agentConfig.upsert({
+    where: { id: "default" },
+    update: { isEnabled: true },
+    create: {
+      id: "default",
+      isEnabled: true,
+    },
+  });
+  console.log("Agent enabled for demo (Vercel Cron will run /api/cron/agent-tick).");
+
   console.log("Done. Run `pnpm dev` to see the dashboard.");
   await prisma.$disconnect();
 }

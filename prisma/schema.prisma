@@ -31,6 +31,8 @@ enum TradeStatus {
 model AgentConfig {
   id              String   @id @default("default")
   isEnabled       Boolean  @default(false)
+  /// Set by Vercel Cron (`/api/cron/agent-tick`); survives across requests on the same DB file.
+  lastCronHeartbeat DateTime?
   tradingMode     String   @default("paper")
   symbolsJson     String   @default("[\"BTCUSD\",\"ETHUSD\"]")
   loopIntervalSec Int      @default(60)
