@@ -20,7 +20,7 @@ pnpm db:push           # Push schema without migration (dev shortcut)
 
 Run a single test file: `pnpm vitest run tests/path/to/file.test.ts`
 
-**Vercel build command** (from `vercel.json`): runs `prisma migrate deploy && tsx scripts/seed-demo.ts && next build` against **`DATABASE_URL`** (PostgreSQL). Set `DATABASE_URL` or Prisma Postgres `STORAGE_*` env vars on Vercel.
+**Vercel build** (from `vercel.json`): `node scripts/vercel-build.cjs` → `prisma migrate deploy`, optional `seed-demo` only if `SEED_DEMO_ON_BUILD=true`, then `next build`, against **`DATABASE_URL`** (PostgreSQL). Set `DATABASE_URL` or Prisma Postgres `STORAGE_*` env vars on Vercel.
 
 ## Architecture
 

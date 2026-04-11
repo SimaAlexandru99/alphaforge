@@ -6,6 +6,7 @@
     "dev": "next dev -p 4000",
     "worker": "tsx scripts/worker.ts",
     "build": "next build",
+    "build:vercel": "node scripts/vercel-build.cjs",
     "start": "next start",
     "clean": "rm -rf .next",
     "lint": "ultracite check",

@@ -152,7 +152,7 @@ The app targets **PostgreSQL** via `DATABASE_URL` (connection URL also read from
 1. Provision a database (e.g. [Prisma Postgres](https://www.prisma.io/docs/postgres), [Neon](https://neon.tech), or `docker compose up -d` with [docker-compose.yml](./docker-compose.yml)).
 2. Set `DATABASE_URL` in `.env` to a `postgresql://` or `postgres://` URL.
 3. Apply migrations: `pnpm exec prisma migrate deploy`
-4. Production build on Vercel runs `prisma migrate deploy` then seed (see `vercel.json`).
+4. Builds on Vercel run `prisma migrate deploy` then `next build` via [`scripts/vercel-build.cjs`](./scripts/vercel-build.cjs). **Demo seed is skipped on Vercel** by default (so deploys don’t wipe `Trade` / `AgentRun`). To seed once, set **`SEED_DEMO_ON_BUILD=true`** in the Vercel environment for that deploy, or run `pnpm exec tsx scripts/seed-demo.ts` locally against your `DATABASE_URL`.
 
 ## Optional: Worker + real Kraken CLI (leaderboard / paper)
 
