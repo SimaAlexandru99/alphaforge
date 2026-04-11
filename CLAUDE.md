@@ -20,7 +20,7 @@ pnpm db:push           # Push schema without migration (dev shortcut)
 
 Run a single test file: `pnpm vitest run tests/path/to/file.test.ts`
 
-**Vercel build command** (from `vercel.json`): runs `prisma db push && tsx scripts/seed-demo.ts && next build` — the SQLite DB is seeded at build time and bundled into serverless functions via `outputFileTracingIncludes`.
+**Vercel build command** (from `vercel.json`): runs `prisma migrate deploy && tsx scripts/seed-demo.ts && next build` against **`DATABASE_URL`** (PostgreSQL). Set `DATABASE_URL` or Prisma Postgres `STORAGE_*` env vars on Vercel.
 
 ## Architecture
 
@@ -56,7 +56,7 @@ PRISM API → lib/agent/loop.ts → lib/agent/decision.ts → lib/agent/risk.ts
 
 **`lib/server/dashboard.ts`** — Aggregates data for server-rendered dashboard pages.
 
-**`lib/runtime-store.ts`** — In-process state for the worker (not available in serverless API routes).
+**`lib/runtime-store.ts`** — Worker PID/heartbeat file state locally; on Vercel, cron heartbeat is stored on `AgentConfig.lastCronHeartbeat`.
 
 **`app/api/`** — REST endpoints:
 - `POST /api/agent/start|stop` — spawn/kill worker process
@@ -66,7 +66,7 @@ PRISM API → lib/agent/loop.ts → lib/agent/decision.ts → lib/agent/risk.ts
 
 ### Database
 
-Prisma ORM with SQLite (`better-sqlite3` synchronous adapter). Schema at `prisma/schema.prisma`. Key models: `AgentConfig`, `SignalSnapshot`, `AgentRun`, `Trade`. Generated client lives in `lib/generated/prisma/`.
+Prisma ORM with **PostgreSQL** (`@prisma/adapter-pg` + `pg`). Schema at `prisma/schema.prisma`; datasource URL is configured in `prisma.config.ts` (`DATABASE_URL` or `STORAGE_PRISMA_DATABASE_URL` / `STORAGE_POSTGRES_URL`). Key models: `AgentConfig`, `SignalSnapshot`, `AgentRun`, `Trade`. Generated client lives in `lib/generated/prisma/`.
 
 After editing `prisma/schema.prisma`, always run `pnpm prisma:generate`.
 
@@ -85,7 +85,7 @@ All env vars are parsed and typed via `lib/env.ts`.
 ## Tech stack
 
 - **Next.js 16** App Router, React 19, TypeScript strict
-- **Prisma v7** + better-sqlite3 (sync adapter, not the default async one)
+- **Prisma v7** + `@prisma/adapter-pg` / `pg`
 - **Tailwind CSS 4**, shadcn/ui components in `components/ui/`
 - **Vitest** for tests (`tests/` directory)
 - **Biome** via Ultracite for lint/format (`biome.json` extends `ultracite/biome/next`)

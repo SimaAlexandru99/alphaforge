@@ -19,9 +19,9 @@ import {
 const AGENT_URI =
   "https://raw.githubusercontent.com/SimaAlexandru99/kraken-hackathon/master/public/agent-registration.json";
 
-const AGENT_NAME = "Kraken AI Trader";
+const AGENT_NAME = "AlphaForge";
 const AGENT_DESCRIPTION =
-  "Autonomous trading agent that uses PRISM market signals and LLM decision-making to execute paper trades on Kraken.";
+  "AlphaForge: autonomous agent using PRISM signals and LLM decisions with risk gates; executes via Kraken CLI with ERC-8004 identity on Sepolia.";
 const AGENT_CAPABILITIES = ["trading", "market-analysis", "risk-management"];
 
 // keccak256("AgentRegistered(uint256,address,address,string)")

@@ -11,13 +11,13 @@ export default async function SignalsPage() {
     <section className="space-y-6">
       <div className="space-y-2">
         <p className="text-muted-foreground text-sm uppercase tracking-[0.24em]">
-          Signals
+          AlphaForge · Signals
         </p>
-        <h1 className="font-heading text-4xl">PRISM Readout</h1>
+        <h1 className="font-heading text-4xl">PRISM market intelligence</h1>
         <p className="max-w-2xl text-muted-foreground text-sm">
-          Latest RSI, trend, volatility, and risk snapshots per symbol. If PRISM
-          keys are missing, the app falls back to deterministic mock signals so
-          the demo still runs.
+          Latest RSI, trend, volatility, and risk snapshots per symbol—fed into
+          AlphaForge&apos;s decision loop. Without a PRISM API key, the app uses
+          deterministic mock signals so development and UI keep working.
         </p>
       </div>
 

@@ -30,8 +30,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kraken Trading Agent",
-  description: "Paper-trading control room with live agent telemetry.",
+  title: "AlphaForge — AI trading agent",
+  description:
+    "AlphaForge: PRISM market signals, LLM decisions, risk gates, Kraken CLI execution, and ERC-8004 identity on Sepolia. Live telemetry dashboard.",
 };
 
 export default function RootLayout({

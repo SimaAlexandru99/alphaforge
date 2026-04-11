@@ -54,15 +54,16 @@ export function LiveDashboard({
       <div className="flex flex-col gap-4 rounded-[2rem] border border-border/60 bg-card/70 p-6 shadow-sm lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-3">
           <p className="text-muted-foreground text-sm uppercase tracking-[0.24em]">
-            Dashboard
+            AlphaForge · Command center
           </p>
           <h1 className="font-heading text-4xl">
-            Live paper-trading telemetry
+            Live operations &amp; telemetry
           </h1>
           <p className="max-w-3xl text-muted-foreground text-sm">
-            Worker separat, SSE live updates, PRISM signals și Kraken paper
-            execution. Simularea rămâne operațională chiar fără chei reale, ca
-            demo-ul să nu depindă de integrarea externă.
+            Real-time PnL, positions, PRISM signals, and agent decisions. SSE
+            updates from the worker; Kraken CLI handles paper or live execution.
+            With simulation enabled, AlphaForge stays usable without external API
+            keys.
           </p>
         </div>
 

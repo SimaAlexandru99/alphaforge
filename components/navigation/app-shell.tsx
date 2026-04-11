@@ -21,9 +21,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
           <div>
             <p className="text-muted-foreground text-xs uppercase tracking-[0.3em]">
-              Kraken Challenge
+              AlphaForge
             </p>
-            <h1 className="font-heading text-xl">Trading Agent Control Room</h1>
+            <h1 className="font-heading text-xl">
+              AI trading agent · PRISM · Kraken CLI · ERC-8004
+            </h1>
           </div>
           <nav className="flex flex-wrap gap-2">
             {navItems.map((item) => {

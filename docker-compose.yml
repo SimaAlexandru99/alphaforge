@@ -1,0 +1,18 @@
+# Optional local Postgres for experimenting with a shared DB (not wired by default).
+# The app still targets SQLite in prisma/schema.prisma; switch the datasource to
+# postgresql and use DATABASE_URL=postgresql://alphaforge:alphaforge@localhost:5432/alphaforge
+# before running prisma migrate / generate.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: alphaforge
+      POSTGRES_PASSWORD: alphaforge
+      POSTGRES_DB: alphaforge
+    ports:
+      - "5432:5432"
+    volumes:
+      - alphaforge_pg:/var/lib/postgresql/data
+
+volumes:
+  alphaforge_pg:

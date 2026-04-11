@@ -1,6 +1,6 @@
 # AlphaForge
 
-**Live demo: https://alphaforge-rho.vercel.app**
+**Live demo: https://alphaforge-five.vercel.app**
 
 AlphaForge is an AI trading agent built for hackathon use cases, combining market signals, LLM decision-making, risk controls, paper trading execution, and ERC-8004 on-chain identity.
 
@@ -12,7 +12,7 @@ Every cycle, the agent:
 - sends the current market + portfolio context to an LLM,
 - applies strict risk checks,
 - executes a paper trade through Kraken CLI,
-- stores everything in SQLite via Prisma,
+- stores everything in PostgreSQL via Prisma,
 - optionally posts attestations and feedback on Sepolia through ERC-8004 flows.
 
 ## Architecture
@@ -28,7 +28,7 @@ Agent Loop
   ├─ LLM decision engine
   ├─ risk engine
   ├─ Kraken paper execution
-  └─ SQLite persistence
+  └─ PostgreSQL persistence
 
 On-chain Layer
   └─ ERC-8004 identity / validation / reputation on Sepolia
@@ -65,7 +65,7 @@ If the action passes the risk engine, AlphaForge executes a paper trade through 
 
 ### 5. Persistence
 
-Trades, runs, and config are saved locally with Prisma + SQLite.
+Trades, runs, and config are saved with Prisma + PostgreSQL.
 
 ### 6. On-chain reputation
 
@@ -129,12 +129,39 @@ scripts/
 - Tailwind CSS
 - shadcn/ui
 - Prisma
-- SQLite
+- PostgreSQL (`pg` + `@prisma/adapter-pg`)
 - OpenAI
 - PRISM API
 - Kraken CLI
 - viem
 - Sepolia
+
+## Deploy on Vercel
+
+1. `vercel link --yes --scope <team-slug> --project alphaforge` (or create the project in the dashboard).
+2. Push environment variables: `pnpm run vercel:env`  
+   This reads `.env`, forces **`KRAKEN_CLI_SIMULATE=true`** on Production (Kraken CLI binary is not available in serverless), and ensures **`CRON_SECRET`** exists for `/api/cron/agent-tick`.
+3. `vercel deploy --prod --yes`
+
+Cron on the Hobby plan is limited to **once per day** (see `vercel.json`). Set **`DATABASE_URL`** (or Prisma Postgres `STORAGE_*` vars) on Vercel so the app uses one shared Postgres instance.
+
+## Database (PostgreSQL)
+
+The app targets **PostgreSQL** via `DATABASE_URL` (connection URL also read from `STORAGE_PRISMA_DATABASE_URL` / `STORAGE_POSTGRES_URL` when using Vercel’s Prisma Postgres integration).
+
+1. Provision a database (e.g. [Prisma Postgres](https://www.prisma.io/docs/postgres), [Neon](https://neon.tech), or `docker compose up -d` with [docker-compose.yml](./docker-compose.yml)).
+2. Set `DATABASE_URL` in `.env` to a `postgresql://` or `postgres://` URL.
+3. Apply migrations: `pnpm exec prisma migrate deploy`
+4. Production build on Vercel runs `prisma migrate deploy` then seed (see `vercel.json`).
+
+## Optional: Worker + real Kraken CLI (leaderboard / paper)
+
+Vercel runs short-lived functions; use a separate process for the infinite loop and for the `kraken` binary:
+
+- Locally: `pnpm worker` with `KRAKEN_CLI_SIMULATE=false` and `KRAKEN_CLI_PATH` pointing at your install.
+- Container: build [Dockerfile.worker](./Dockerfile.worker), install or mount [Kraken CLI](https://github.com/krakenfx/kraken-cli) in the image, pass the same `.env` as the Next app.
+
+Hackathon eligibility (e.g. [early.surge.xyz](https://early.surge.xyz)) is outside this repo—register your team there per lablab rules.
 
 ## Local setup
 
@@ -146,12 +173,12 @@ pnpm install
 
 ### 2. Create environment file
 
-Create `.env.local` and add your local values.
+Create `.env` (or `.env.local`) and add your local values. **`DATABASE_URL` must be a PostgreSQL URL** (`postgres://` or `postgresql://`). Use Prisma Postgres, Neon, or run `docker compose up -d` and point `DATABASE_URL` at the container.
 
 Example:
 
 ```env
-DATABASE_URL="file:./prisma/dev.db"
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE?sslmode=require"
 TRADING_MODE="paper"
 
 KRAKEN_API_KEY=""
@@ -174,7 +201,13 @@ SEPOLIA_RPC_URL=""
 ### 3. Run Prisma
 
 ```bash
-pnpm prisma migrate dev
+pnpm exec prisma migrate deploy
+```
+
+For local schema iteration (creates migration files):
+
+```bash
+pnpm db:migrate
 ```
 
 ### 4. Start the app
@@ -220,7 +253,7 @@ Contracts (Sepolia):
 - AI-driven trading decisions
 - strict risk engine before execution
 - paper trading flow through Kraken CLI
-- local persistence for reproducible demo
+- PostgreSQL persistence for reproducible demo
 - ERC-8004 identity / validation / reputation integration
 - clean dashboard for live inspection
 

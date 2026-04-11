@@ -1,0 +1,4 @@
+# Never upload local secrets with `vercel deploy` (use Dashboard env or `pnpm vercel:env`).
+.env
+.env.*
+!.env.example

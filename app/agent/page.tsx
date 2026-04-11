@@ -14,13 +14,13 @@ export default async function AgentPage() {
     <section className="space-y-6">
       <div className="space-y-2">
         <p className="text-muted-foreground text-sm uppercase tracking-[0.24em]">
-          Agent
+          AlphaForge · Agent
         </p>
-        <h1 className="font-heading text-4xl">Strategy Controls</h1>
+        <h1 className="font-heading text-4xl">Strategy &amp; runtime</h1>
         <p className="max-w-2xl text-muted-foreground text-sm">
-          Configure symbols, risk guardrails, cadence, and model selection.
-          Start and stop only control the separate worker process; strategy
-          enablement remains explicit.
+          Configure symbols, risk guardrails, cadence, and LLM settings for
+          AlphaForge. Start/stop controls the worker process; enabling the agent
+          stays a separate, explicit step.
         </p>
       </div>
 

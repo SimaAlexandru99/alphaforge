@@ -1,12 +1,15 @@
 import "dotenv/config";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../lib/generated/prisma/client.js";
 
-console.log("DATABASE_URL", process.env.DATABASE_URL);
+const url = process.env.DATABASE_URL;
+if (!url?.startsWith("postgres")) {
+  console.error("DATABASE_URL must be a postgres:// or postgresql:// URL");
+  process.exit(1);
+}
+console.log("DATABASE_URL set:", url.slice(0, 24), "…");
 const prisma = new PrismaClient({
-  adapter: new PrismaBetterSqlite3({
-    url: process.env.DATABASE_URL ?? "file:./prisma/dev.db",
-  }),
+  adapter: new PrismaPg({ connectionString: url }),
 });
 try {
   const rows = await prisma.agentConfig.findMany();
@@ -14,4 +17,6 @@ try {
 } catch (error) {
   console.error(error);
   process.exitCode = 1;
+} finally {
+  await prisma.$disconnect();
 }

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <title>AlphaForge — Presentation</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Merriweather:wght@400;700;900&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* Mirrors app/globals.css :root + app-shell gradient */
+    :root {
+      --background: oklch(1 0 0);
+      --foreground: oklch(0.147 0.004 49.3);
+      --card: oklch(1 0 0);
+      --card-foreground: oklch(0.147 0.004 49.3);
+      --primary: oklch(0.214 0.009 43.1);
+      --primary-foreground: oklch(0.986 0.002 67.8);
+      --muted: oklch(0.96 0.002 17.2);
+      --muted-foreground: oklch(0.547 0.021 43.1);
+      --border: oklch(0.922 0.005 34.3);
+      --accent: oklch(0.96 0.002 17.2);
+      --destructive: oklch(0.577 0.245 27.325);
+      --chart-1: oklch(0.837 0.128 66.29);
+      --chart-2: oklch(0.705 0.213 47.604);
+      --font-heading: "Merriweather", Georgia, serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--foreground);
+      font-family: var(--font-mono);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .deck {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .slide {
+      min-height: min(100vh, 720px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 2.5rem 2rem;
+      margin-bottom: 2rem;
+      border-radius: 0;
+      border: 1px solid var(--border);
+      background:
+        radial-gradient(circle at top left,
+          rgba(252, 211, 77, 0.18),
+          transparent 28%),
+        linear-gradient(180deg,
+          rgba(255, 255, 255, 0.94),
+          rgba(255, 255, 255, 0.86));
+      box-shadow: 0 1px 2px oklch(0 0 0 / 4%);
+    }
+
+    .slide-header {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.28em;
+      color: var(--muted-foreground);
+      margin-bottom: 0.75rem;
+    }
+
+    .slide h2 {
+      margin: 0 0 1rem;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      color: var(--foreground);
+    }
+
+    .slide h3 {
+      margin: 1.25rem 0 0.5rem;
+      font-size: 1.05rem;
+      color: var(--primary);
+    }
+
+    .tagline {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      color: var(--muted-foreground);
+      max-width: 36rem;
+    }
+
+    ul {
+      margin: 0.5rem 0 0;
+      padding-left: 1.25rem;
+    }
+
+    li {
+      margin-bottom: 0.4rem;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      font-size: 0.75rem;
+      color: var(--foreground);
+    }
+
+    .pill.accent {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+    }
+
+    .pill.chart {
+      border-color: color-mix(in oklch, var(--chart-1) 40%, var(--border));
+      color: color-mix(in oklch, var(--chart-2) 35%, var(--foreground));
+    }
+
+    .mono-block {
+      font-size: 0.8rem;
+      padding: 1rem 1.25rem;
+      background: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 0;
+      white-space: pre-wrap;
+      color: var(--foreground);
+    }
+
+    .grid-2 {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .card-mini {
+      padding: 1rem;
+      border: 1px solid var(--border);
+      background: oklch(1 0 0 / 80%);
+    }
+
+    .card-mini strong {
+      display: block;
+      font-family: var(--font-heading);
+      margin-bottom: 0.35rem;
+      font-size: 0.95rem;
+    }
+
+    .footer-line {
+      margin-top: auto;
+      padding-top: 1.5rem;
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+    }
+
+    a {
+      color: color-mix(in oklch, var(--chart-2) 50%, var(--foreground));
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .deck {
+        max-width: none;
+        padding: 0;
+      }
+
+      .slide {
+        page-break-after: always;
+        page-break-inside: avoid;
+        min-height: 100vh;
+        margin-bottom: 0;
+        box-shadow: none;
+      }
+
+      .slide:last-child {
+        page-break-after: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="deck">
+    <!-- 1 -->
+    <section class="slide">
+      <p class="slide-header">AlphaForge · 01 / 10</p>
+      <h1>AlphaForge</h1>
+      <p class="tagline">
+        Autonomous trading agent — verifiable signals, LLM decisions, Kraken
+        CLI execution, ERC-8004 identity.
+      </p>
+      <div class="pill-row">
+        <span class="pill accent">Kraken track</span>
+        <span class="pill accent">ERC-8004 track</span>
+        <span class="pill chart">Live demo</span>
+      </div>
+      <p class="footer-line">
+        <a href="https://alphaforge-rho.vercel.app">alphaforge-rho.vercel.app</a>
+        · MIT · Next.js · TypeScript · Stack: Next.js 16 · Prisma · viem ·
+        Sepolia
+      </p>
+    </section>
+
+    <!-- 2 -->
+    <section class="slide">
+      <p class="slide-header">AlphaForge · 02 / 10</p>
+      <h2>Why AlphaForge?</h2>
+      <div class="grid-2">
+        <div class="card-mini">
+          <strong>Transparency</strong>
+          Agents touching capital need auditable, explainable actions — not
+          black-box signals.
+        </div>
+        <div class="card-mini">
+          <strong>Risk control</strong>
+          Hard guardrails enforced at every step before any order reaches the
+          exchange.
+        </div>
+        <div class="card-mini">
+          <strong>End-to-end loop</strong>
+          Market data → decision → risk gate → execution → persistence →
+          attestation.
+        </div>
+        <div class="card-mini">
+          <strong>Hackathon fit</strong>
+          Kraken CLI execution path; optional ERC-8004 / Sepolia trust layer.
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="slide">
+      <p class="slide-header">AlphaForge · 03 / 10</p>
+      <h2>System architecture</h2>
+      <div class="mono-block">
+        Next.js App (dashboard + API)
+        PRISM API → Agent loop → decision → risk
+        Kraken CLI → paper / live execution
+        SQLite / Prisma → AgentRun · Trade · Config
+        ERC-8004 / Sepolia → identity · intents · registries
+
+        lib/prism/ · lib/agent/ · lib/kraken/ · lib/onchain/ · prisma/
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="slide">
+      <p class="slide-header">AlphaForge · 04 / 10</p>
+      <h2>Intelligence layer</h2>
+      <h3>PRISM</h3>
+      <ul>
+        <li>Price, momentum, RSI, trend, volatility, risk score per symbol</li>
+        <li>Structured context for the LLM</li>
+      </ul>
+      <h3>LLM decision · lib/agent/decision.ts</h3>
+      <ul>
+        <li>Structured prompt → BUY / SELL / HOLD + confidence + reasoning</li>
+        <li>Heuristic fallback when no API key</li>
+      </ul>
+      <div class="mono-block">
+        { "action": "BUY", "confidence": 0.82, "reasoning": "RSI oversold…" }
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="slide">
+      <p class="slide-header">AlphaForge · 05 / 10</p>
+      <h2>Risk gate · lib/agent/risk.ts</h2>
+      <ul>
+        <li>Max exposure — position size limits vs portfolio</li>
+        <li>Stop-loss / take-profit thresholds</li>
+        <li>Duplicate guard — no duplicate open position per symbol</li>
+        <li>Paper mode — safe defaults for hackathon demos</li>
+      </ul>
+      <p class="tagline" style="margin-top: 1rem">
+        No execution without passing the risk gate — models suggest, policy
+        enforces.
+      </p>
+    </section>
+
+    <!-- 6 -->
+    <section class="slide">
+      <p class="slide-header">AlphaForge · 06 / 10</p>
+      <h2>Kraken execution layer</h2>
+      <ul>
+        <li>
+          <strong style="font-family: var(--font-heading)">lib/kraken/cli.ts</strong>
+          — subprocess around Kraken CLI (signing stays out of agent core)
+        </li>
+        <li>KRAKEN_CLI_SIMULATE=true — local run without exchange keys</li>
+        <li>TRADING_MODE=paper|live — config-level switch</li>
+        <li>Prisma — full run/trade telemetry for audit</li>
+      </ul>
+    </section>
+
+    <!-- 7 -->
+    <section class="slide">
+      <p class="slide-header">AlphaForge · 07 / 10</p>
+      <h2>ERC-8004 · Sepolia</h2>
+      <ul>
+        <li>chainId 11155111 · Agent ID 45 · agent-registration.json</li>
+        <li>viem — registration + EIP-712-style trade intents (lib/onchain/)</li>
+        <li>
+          Registries: AgentRegistry, HackathonVault, RiskRouter, Reputation,
+          Validation (addresses in README)
+        </li>
+      </ul>
+    </section>
+
+    <!-- 8 -->
+    <section class="slide">
+      <p class="slide-header">AlphaForge · 08 / 10</p>
+      <h2>Product</h2>
+      <div class="grid-2">
+        <div class="card-mini">
+          <strong>/</strong>
+          Dashboard — PnL, positions, decision feed
+        </div>
+        <div class="card-mini">
+          <strong>/signals</strong>
+          PRISM readout
+        </div>
+        <div class="card-mini">
+          <strong>/agent</strong>
+          Strategy &amp; worker controls
+        </div>
+        <div class="card-mini">
+          <strong>/trades</strong>
+          Execution ledger
+        </div>
+      </div>
+      <h3>On-chain proof</h3>
+      <p class="tagline">
+        Sepolia registration tx, Etherscan, and public
+        <code>agent-registration.json</code> — no separate /onchain route
+        required.
+      </p>
+      <p class="footer-line">
+        Live:
+        <a href="https://alphaforge-rho.vercel.app">alphaforge-rho.vercel.app</a>
+      </p>
+    </section>
+
+    <!-- 9 -->
+    <section class="slide">
+      <p class="slide-header">AlphaForge · 09 / 10</p>
+      <h2>Lessons &amp; roadmap</h2>
+      <h3>Learned</h3>
+      <ul>
+        <li>CLI execution isolates exchange complexity from decision code</li>
+        <li>Keep LLM and risk as separate layers</li>
+        <li>Simulation mode enables fast iteration</li>
+      </ul>
+      <h3>Roadmap</h3>
+      <ul>
+        <li>Hosted Postgres · richer ERC-8004 validation loops · backtesting</li>
+      </ul>
+    </section>
+
+    <!-- 10 -->
+    <section class="slide">
+      <p class="slide-header">AlphaForge · 10 / 10</p>
+      <h1 style="margin-bottom: 0.5rem">AlphaForge</h1>
+      <p class="tagline">Thank you · Questions?</p>
+      <ul style="margin-top: 1.25rem">
+        <li>
+          Demo:
+          <a href="https://alphaforge-rho.vercel.app">alphaforge-rho.vercel.app</a>
+        </li>
+        <li>
+          Repo:
+          <a href="https://github.com/SimaAlexandru99/alphaforge">github.com/SimaAlexandru99/alphaforge</a>
+        </li>
+        <li>License: MIT · Sepolia · Agent ID 45</li>
+      </ul>
+      <div class="pill-row">
+        <span class="pill chart">Next.js 16</span>
+        <span class="pill chart">TypeScript</span>
+        <span class="pill chart">PRISM</span>
+        <span class="pill chart">viem</span>
+        <span class="pill chart">Kraken CLI</span>
+      </div>
+    </section>
+  </div>
+</body>
+
+</html>

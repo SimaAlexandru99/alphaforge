@@ -1,6 +1,4 @@
-import fs from "node:fs";
-import path from "node:path";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { env } from "@/lib/env";
 import { PrismaClient } from "@/lib/generated/prisma/client";
 
@@ -8,44 +6,41 @@ declare global {
   var prismaGlobal: PrismaClient | undefined;
 }
 
-// On Vercel, the bundled DB is in a read-only layer. Copy it to /tmp (writable)
-// on cold start so writes succeed. /tmp is ephemeral per function instance, which
-// is fine for a demo — each cold start gets a fresh copy of the seeded DB.
-function resolveDbUrl(): string {
-  if (process.env.VERCEL !== "1") {
-    return env.databaseUrl;
+function createPrismaClient(): PrismaClient {
+  const url = env.databaseUrl;
+  if (!url?.startsWith("postgres")) {
+    throw new Error(
+      "[prisma] DATABASE_URL must be a PostgreSQL URL (postgres:// or postgresql://). " +
+        "Use Prisma Postgres, Neon, or `docker compose up` and set DATABASE_URL in .env " +
+        "(or STORAGE_PRISMA_DATABASE_URL from Vercel — see scripts/sync-vercel-production-env.cjs)."
+    );
   }
-  const tmpPath = "/tmp/dev.db";
-  if (!fs.existsSync(tmpPath)) {
-    // Try multiple candidate paths — outputFileTracingIncludes places the file
-    // relative to the function root, but the exact location can vary.
-    const candidates = [
-      path.join(process.cwd(), "prisma/dev.db"),
-      path.join(process.cwd(), ".next/server/prisma/dev.db"),
-      "/var/task/prisma/dev.db",
-    ];
-    const found = candidates.find((p) => fs.existsSync(p));
-    if (found) {
-      fs.copyFileSync(found, tmpPath);
-      console.log(`[prisma] copied DB from ${found} to ${tmpPath}`);
-    } else {
-      console.error(
-        `[prisma] bundled DB not found; tried: ${candidates.join(", ")}`
-      );
-    }
-  }
-  return "file:/tmp/dev.db";
-}
 
-export const prisma =
-  globalThis.prismaGlobal ??
-  new PrismaClient({
-    adapter: new PrismaBetterSqlite3({
-      url: resolveDbUrl(),
-    }),
+  const adapter = new PrismaPg({ connectionString: url });
+
+  return new PrismaClient({
+    adapter,
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
-
-if (process.env.NODE_ENV !== "production") {
-  globalThis.prismaGlobal = prisma;
 }
+
+function getOrCreatePrisma(): PrismaClient {
+  if (globalThis.prismaGlobal) {
+    return globalThis.prismaGlobal;
+  }
+  const client = createPrismaClient();
+  globalThis.prismaGlobal = client;
+  return client;
+}
+
+/** Lazy proxy so importing this module does not connect until first use (helps tooling). */
+export const prisma = new Proxy({} as PrismaClient, {
+  get(_target, prop) {
+    const client = getOrCreatePrisma();
+    const value = Reflect.get(client, prop as keyof PrismaClient, client);
+    if (typeof value === "function") {
+      return value.bind(client);
+    }
+    return value;
+  },
+});

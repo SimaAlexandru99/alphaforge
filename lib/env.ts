@@ -13,8 +13,20 @@ const boolFromEnv = (value: string | undefined, fallback = false) => {
   return ["1", "true", "yes", "on"].includes(value.toLowerCase());
 };
 
+function resolveDatabaseUrl(): string {
+  const direct = process.env.DATABASE_URL?.trim();
+  if (direct?.startsWith("postgres")) {
+    return direct;
+  }
+  return (
+    process.env.STORAGE_PRISMA_DATABASE_URL?.trim() ||
+    process.env.STORAGE_POSTGRES_URL?.trim() ||
+    ""
+  );
+}
+
 export const env = {
-  databaseUrl: process.env.DATABASE_URL ?? "file:./dev.db",
+  databaseUrl: resolveDatabaseUrl(),
   tradingMode: process.env.TRADING_MODE ?? "paper",
   defaultCapitalUsd: numberFromEnv(process.env.DEFAULT_CAPITAL_USD, 10_000),
   prismBaseUrl: process.env.PRISM_API_BASE_URL ?? "https://api.prismapi.ai",

@@ -33,12 +33,12 @@ export default async function TradesPage() {
     <section className="space-y-6">
       <div className="space-y-2">
         <p className="text-muted-foreground text-sm uppercase tracking-[0.24em]">
-          Trades
+          AlphaForge · Trades
         </p>
-        <h1 className="font-heading text-4xl">Execution Ledger</h1>
+        <h1 className="font-heading text-4xl">Execution ledger</h1>
         <p className="max-w-2xl text-muted-foreground text-sm">
-          Every paper order, closure, and PnL rollup lives here. Open positions
-          use the latest signal price for unrealized tracking.
+          Full AlphaForge trade history: orders, closures, and PnL. Open
+          positions use the latest signal price for unrealized PnL.
         </p>
       </div>
 

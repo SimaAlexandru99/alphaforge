@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm exec prisma db push --schema ./prisma/schema.prisma && pnpm exec tsx scripts/seed-demo.ts && pnpm run build",
+  "buildCommand": "pnpm exec prisma migrate deploy && pnpm exec tsx scripts/seed-demo.ts && pnpm run build",
   "installCommand": "pnpm install",
   "crons": [
     {
