@@ -4,8 +4,8 @@ import { env } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import type { RuntimeState } from "@/lib/types";
 
-/** Cron runs every ~2m; treat heartbeat as stale after this window. */
-const CRON_HEARTBEAT_STALE_MS = 8 * 60 * 1000;
+/** Match `vercel.json` cron cadence (Hobby = max 1/day; Pro can use tighter schedules). */
+const CRON_HEARTBEAT_STALE_MS = 26 * 60 * 60 * 1000;
 
 const runtimeDir =
   process.env.VERCEL === "1"

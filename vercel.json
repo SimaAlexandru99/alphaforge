@@ -4,7 +4,7 @@
   "crons": [
     {
       "path": "/api/cron/agent-tick",
-      "schedule": "*/2 * * * *"
+      "schedule": "0 12 * * *"
     }
   ]
 }
